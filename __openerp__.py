@@ -1,7 +1,7 @@
 {
     'name': "Entity SMS",
-    'version': "2.9.9",
-    'author': "Sythil",
+    'version': "2.9.10",
+    'author': "Sythil, Lubon bvba",
     'category': "Tools",
     'summary': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
     'license':'GPL-3',

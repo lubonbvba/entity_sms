@@ -17,14 +17,16 @@ class esms_accounts(models.Model):
 
     @api.model
     def check_all_messages(self):                
-        my_accounts = self.env['esms.accounts'].search([('priority','>=',0)])        
-        for sms_account in my_accounts:            
-            self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
+        my_accounts = self.env['esms.accounts'].search([('priority','>=',0)])
+        for sms_account in my_accounts:    
+            if hasattr(self.env[sms_account.account_gateway.gateway_model_name], 'check_messages'):
+                self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
 
     @api.multi
     def check_messages(self):                
         my_accounts = self.env['esms.accounts'].search([('priority','>',0)])    
         #pdb.set_trace()    
         for sms_account in my_accounts:            
-            self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
+            if hasattr(self.env[sms_account.account_gateway.gateway_model_name], 'check_messages'):
+                self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
 

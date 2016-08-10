@@ -1,0 +1,1 @@
+curl -X POST 'http://localhost:8069/sms/voxbone/receive/32466900133' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary $'{"from" : "+14151111111", "msg" : "Hello dolly!", "frag": null, "time" : "2016-08-08 21:26:33", "uuid" : "aabF4udH78lpO"}'

@@ -1,5 +1,5 @@
 from openerp import models, fields, api
-import logging
+import logging, exceptions
 _logger = logging.getLogger(__name__)
 import requests
 from datetime import datetime
@@ -62,15 +62,21 @@ class telegram_core(models.Model):
         #pdb.set_trace()
         if not account_id:
             account_id=self.env.context['active_id']
+       
         sms_account = self.env['esms.accounts'].browse(account_id)
         telegram_url="https://api.telegram.org/" + str(sms_account.telegram_api_id) + "/getUpdates" 
         response_string = requests.get(telegram_url)
         response=json.loads(response_string.content)
+        self.receive_message(sms_account,response)
+     
+
+
+    def receive_message(self,sms_account,response):        
         for message in response['result']:
             if len(self.env['esms.history'].search([('sms_gateway_message_id','=',message['update_id'])])) == 0:
                 vals={
                     'sms_gateway_message_id':message['update_id'],
-                    'account_id': account_id,
+                    'account_id': sms_account.id,
                     'direction': 'I',
                     'status_string': str(message),
                     'from_mobile':message['message']['from']['id'],
@@ -85,8 +91,8 @@ class telegram_core(models.Model):
 
                 history_id = self.env['esms.history'].create(vals)
 
-    def receive_message(self,number,vals):
-        pdb.set_trace()
+    def zzzreceive_message(self,number,vals):
+      
         self.env['esms.history'].create({
             'sms_content':vals['msg'],
             'to_mobile':number,
@@ -96,13 +102,14 @@ class telegram_core(models.Model):
             'status_string': str(vals),
             'sms_gateway_message_id': vals['uuid'],
             })
+
+
     def set_webhook(self,sms_account):
         telegram_url="https://api.telegram.org/" + str(sms_account.telegram_api_id) + "/setWebhook" 
-        if sms_account.telegram_webhook_url:
-            telegram_url+="?url=" + str(sms_account.telegram_webhook_url)
+        if sms_account.telegram_webhook_url and sms_account.telegram_token:
+            telegram_url+="?url=" + str(sms_account.telegram_webhook_url) + str(sms_account.telegram_token)
         response_string = requests.get(telegram_url)
         response=json.loads(response_string.content)
-        pdb.set_trace()
 
 
 
@@ -112,4 +119,5 @@ class telegram_conf(models.Model):
     _inherit = "esms.accounts"
     
     telegram_api_id = fields.Char(string='API ID')
-    telegram_webhook_url = fields.Char(string='Webhook Url', default="https://lubon.qlan.eu/sms/telegram/receive/<ID>")
+    telegram_webhook_url = fields.Char(string='Webhook Url', default="https://lubon.qlan.eu/sms/telegram/receive/")
+    telegram_token = fields.Char(help="Secret ID used by telegram to connect to https interface")

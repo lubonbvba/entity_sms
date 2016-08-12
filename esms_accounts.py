@@ -20,7 +20,7 @@ class esms_accounts(models.Model):
     def check_all_messages(self):                
         my_accounts = self.env['esms.accounts'].search([('priority','>=',0)])
         for sms_account in my_accounts:    
-            if self.poll and hasattr(self.env[sms_account.account_gateway.gateway_model_name], 'check_messages'):
+            if sms_account.poll and hasattr(self.env[sms_account.account_gateway.gateway_model_name], 'check_messages'):
                 self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
 
     @api.multi

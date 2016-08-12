@@ -9,7 +9,8 @@
       	          <group>
       	              <field name="name"/>
       	              <field name="account_gateway" widget="selection"/>
-      	              <field name="priority"/>
+                      <field name="priority"/>
+      	              <field name="poll"/>
       	              <field name="gateway_model" invisible="1"/>
       	          </group>
       	          <h2 id="gatewayhook">Gateway Settings</h2>
@@ -26,7 +27,8 @@
       	      
       	          <field name="priority"/>
       	          <field name="name"/>
-      	          <field name="account_gateway"/>
+                  <field name="account_gateway"/>
+      	          <field name="poll"/>
       	      </tree>
       	  </field>
       </record>

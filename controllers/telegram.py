@@ -20,7 +20,7 @@ class MyController(http.Controller):
     def sms_telegram_receive(self, telegram_token):
         account=request.env['esms.accounts'].sudo().search([('telegram_token','=',telegram_token)])
         if len(account)==1:
-            request.env['esms.telegram'].sudo().receive_message(account,request.jsonrequest)
+            request.env['esms.telegram'].sudo().receive_message(account,{'ok': True, 'result':[request.jsonrequest]})
             return {"ok":True,"error code":200,"description":"ok"}
         else:
             return {"ok":False,"error code":404,"description":"Token unknown"}

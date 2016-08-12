@@ -31,8 +31,8 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-      	        <field name="mobile" position="replace">
-      	            <field name="mobile" placeholder="E.164 format e.g. +61 427 671 760"/>
+      	        <field name="mobile" position="after">
+      	            <!-- field name="mobile" placeholder="E.164 format e.g. +61 427 671 760"/ -->
                     <field name="mobile_e164" invisible="True"/>
       	            <field name="telegram_chat_id"/>
       	        </field>

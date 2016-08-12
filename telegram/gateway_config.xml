@@ -10,7 +10,10 @@
          <div attrs="{'invisible': [('gateway_model', '!=', 'esms.telegram')]}">
           <group>
             <field name="telegram_api_id" groups="base.group_erp_manager,base.group_system"/>
+            <field name="telegram_webhook_url" groups="base.group_erp_manager,base.group_system"/>
             <button name="check_messages" type="object" String="receive" groups="base.group_erp_manager,base.group_system"/>
+            <button name="set_webhook" type="object" String="Set webhook" groups="base.group_erp_manager,base.group_system"/>
+
           </group>
         </div>
       </xpath>

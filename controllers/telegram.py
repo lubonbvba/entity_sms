@@ -16,15 +16,10 @@ class MyController(http.Controller):
         
         return "<Response></Response>"
         
-    @http.route('/sms/telegram/receive/<number>/', type="json", auth="public")
-    def sms_telegram_receive(self, number):
-        pdb.set_trace() 
-        values = {}
-	for field_name, field_value in kwargs.items():
-            values[field_name] = field_value
-           
+    @http.route('/sms/telegram/receive/<account>/', type="json", auth="public")
+    def sms_telegram_receive(self, account):
         
-        telegram_account = request.env['esms.accounts'].sudo().search([('telegram_account_sid','=', values['AccountSid'])])
-        request.env['esms.telegram'].sudo().check_messages(telegram_account.id, values['MessageSid'])
+        #pdb.set_trace()   
+        request.env['esms.telegram'].sudo().receive_message(account,request.jsonrequest)
         
-        return "<Response></Response>"
+        return 200

@@ -19,7 +19,7 @@ class telegram_core(models.Model):
     _name = "esms.telegram"
     
     api_url = fields.Char(string='API URL', default="https://api.telegram.org")
-    
+
     def send_message(self, sms_gateway_id,from_number,to_number, sms_content, my_model_name, my_record_id, my_field_name):
         sms_account = self.env['esms.accounts'].search([('id','=',sms_gateway_id)])
        
@@ -85,6 +85,26 @@ class telegram_core(models.Model):
 
                 history_id = self.env['esms.history'].create(vals)
 
+    def receive_message(self,number,vals):
+        pdb.set_trace()
+        self.env['esms.history'].create({
+            'sms_content':vals['msg'],
+            'to_mobile':number,
+            'direction': 'I',
+            'my_date': vals['time'],
+            'from_mobile':vals['from'],
+            'status_string': str(vals),
+            'sms_gateway_message_id': vals['uuid'],
+            })
+    def set_webhook(self,sms_account):
+        telegram_url="https://api.telegram.org/" + str(sms_account.telegram_api_id) + "/setWebhook" 
+        if sms_account.telegram_webhook_url:
+            telegram_url+="?url=" + str(sms_account.telegram_webhook_url)
+        response_string = requests.get(telegram_url)
+        response=json.loads(response_string.content)
+        pdb.set_trace()
+
+
 
 
 class telegram_conf(models.Model):
@@ -92,3 +112,4 @@ class telegram_conf(models.Model):
     _inherit = "esms.accounts"
     
     telegram_api_id = fields.Char(string='API ID')
+    telegram_webhook_url = fields.Char(string='Webhook Url', default="https://lubon.qlan.eu/sms/telegram/receive/<ID>")

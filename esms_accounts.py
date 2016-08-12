@@ -28,5 +28,11 @@ class esms_accounts(models.Model):
         #pdb.set_trace()    
         for sms_account in my_accounts:            
             if hasattr(self.env[sms_account.account_gateway.gateway_model_name], 'check_messages'):
+    
                 self.env[sms_account.account_gateway.gateway_model_name].check_messages(sms_account.id)
 
+    @api.multi
+    def set_webhook(self):   
+        if hasattr(self.env[self.account_gateway.gateway_model_name], 'set_webhook'):
+            self.env[self.account_gateway.gateway_model_name].set_webhook(self)
+    

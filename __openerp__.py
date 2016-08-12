@@ -1,6 +1,6 @@
 {
     'name': "Entity SMS",
-    'version': "2.9.10",
+    'version': "2.9.11",
     'author': "Sythil, Lubon bvba",
     'category': "Tools",
     'summary': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
@@ -9,7 +9,7 @@
         'ir.cron.csv',
         'esms_core.xml',
         'res_partner.xml',
-        'crm_lead.xml',
+ #       'crm_lead.xml',
         'esms_history.xml',
         'esms_accounts.xml',
         'esms_templates.xml',
@@ -31,7 +31,8 @@
         'esms_settings.xml',
     ],
     'demo': [],
-    'depends': ['web', 'crm','marketing'],
+    'depends': ['web'],
+ #   'depends': ['web', 'crm','marketing'],
     'images':[
     'static/description/2.jpg',
     'static/description/1.png',

@@ -71,10 +71,12 @@ class telegram_core(models.Model):
      
 
 
-    def receive_message(self,sms_account,response):        
-        for message in response['result']:
-            if len(self.env['esms.history'].search([('sms_gateway_message_id','=',message['update_id'])])) == 0:
-                vals={
+    def receive_message(self,sms_account,response): 
+#        vals={'status_string': str(response)}
+        if ('result' in response.keys()):
+            for message in response['result']:
+                if len(self.env['esms.history'].search([('sms_gateway_message_id','=',message['update_id'])])) == 0:
+                    vals={
                     'sms_gateway_message_id':message['update_id'],
                     'account_id': sms_account.id,
                     'direction': 'I',
@@ -83,13 +85,13 @@ class telegram_core(models.Model):
                     'to_mobile':sms_account['name'],
                     'my_date':strftime("%Y-%m-%d %H:%M:%S", gmtime(message['message']['date']))
                     }
-                if 'text' in message['message'].keys():
-                    vals.update({
-                        'sms_content': message['message']['text'],
-                    })
-               # pdb.set_trace()
-
-                history_id = self.env['esms.history'].create(vals)
+                    if 'text' in message['message'].keys():
+                        vals.update({
+                            'sms_content': message['message']['text'],
+                            })
+                    history_id = self.env['esms.history'].create(vals)
+        else:
+            history_id = self.env['esms.history'].create({'status_string': str(response)})
 
     def zzzreceive_message(self,number,vals):
       

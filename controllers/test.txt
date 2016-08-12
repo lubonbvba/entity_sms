@@ -10,10 +10,23 @@ curl -X POST 'http://localhost:8069/sms/telegram/receive/jsmdgslhglYERTERT' -H '
 "message":{"message_id":86,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027086,"text":"Test test"}},{"update_id":370523232,
 "message":{"message_id":87,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027226,"text":"Test 2"}}]}'
 
-
+curl -X POST 'http://localhost:8069/sms/telegram/receive/jsmdgslhglYERTERT' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary $'{"ok":true,"reult":[{"update_id":370523231,
+"message":{"message_id":86,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027086,"text":"Test test"}},{"update_id":370523232,
+"message":{"message_id":87,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027226,"text":"Test 2"}}]}'
 
 
 
 curl -X POST 'http://localhost:8069/sms/telegram/receive/invalid' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary $'{"ok":true,"result":[{"update_id":370523231,
+"message":{"message_id":86,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027086,"text":"Test test"}},{"update_id":370523232,
+"message":{"message_id":87,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027226,"text":"Test 2"}}]}'
+
+
+
+
+
+
+
+
+curl -X POST 'https://lubon.qlan.eu/sms/telegram/receive/invalid' -H 'Content-Type: application/json' -H 'Accept: application/json' --data-binary $'{"ok":true,"result":[{"update_id":370523231,
 "message":{"message_id":86,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027086,"text":"Test test"}},{"update_id":370523232,
 "message":{"message_id":87,"from":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean"},"chat":{"id":186243699,"first_name":"Luc","last_name":"Bonjean","username":"lbonjean","type":"private"},"date":1471027226,"text":"Test 2"}}]}'

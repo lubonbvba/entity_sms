@@ -12,13 +12,14 @@ class sms_response():
      response_code = ""
      human_read_error = ""
      message_id = ""
-     delivary_state = ""
+     delivery_state = ""
 
 class voxbone_core(models.Model):
 
     _name = "esms.voxbone"
     
     api_url = fields.Char(string='API URL', default="https://api.voxbone.org")
+
     
     def send_message(self, sms_gateway_id,from_number,to_number, sms_content, my_model_name, my_record_id, my_field_name):
         sms_account = self.env['esms.accounts'].search([('id','=',sms_gateway_id)])
@@ -26,7 +27,7 @@ class voxbone_core(models.Model):
         format_number = to_number
         if " " in format_number: format_number.replace(" ", "")
         if "+" in format_number: format_number = format_number.replace("+", "")
-   #     voxbone_url = "http://api.voxbone.com/http/sendmsg?user=" + str(sms_account.voxbone_username) + "&password=" + str(sms_account.voxbone_password) + "&api_id=" + str(sms_account.voxbone_api_id) + "&from=" + str(self.env.user.partner_id.mobile) + "&to=" + str(format_number) + "&text=" + str(sms_content)
+        voxbone_url = "http://api.voxbone.com/http/sendmsg?user=" + str(sms_account.voxbone_username) + "&password=" + str(sms_account.voxbone_password) + "&api_id=" + str(sms_account.voxbone_api_id) + "&from=" + str(self.env.user.partner_id.mobile) + "&to=" + str(format_number) + "&text=" + str(sms_content)
 
         voxbone_url="https://api.voxbone.org/" + str(sms_account.voxbone_api_id) + "/sendMessage" 
         voxbone_url+="?chat_id=" + str(to_number)
@@ -101,3 +102,6 @@ class voxbone_conf(models.Model):
     _inherit = "esms.accounts"
     
     voxbone_api_id = fields.Char(string='API ID')
+        
+    voxbone_user=fields.Char()
+    voxbone_password=fields.Char()

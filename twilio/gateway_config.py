@@ -8,7 +8,7 @@ from openerp.http import request
 from openerp.osv import osv
 
 class sms_response():
-     delivary_state = ""
+     delivery_state = ""
      response_string = ""
      human_read_error = ""
      message_id = ""
@@ -42,17 +42,17 @@ class twilio_core(models.Model):
         if len(my_elements_human) != 0:
 	    human_read_error = my_elements_human[0].text
         
-        #The message id is important for delivary reports also set delivary_state=successful
+        #The message id is important for delivery reports also set delivery_state=successful
 	sms_gateway_message_id = ""
-	delivary_state = "failed"
+	delivery_state = "failed"
 	my_elements = root.xpath('//Sid')
 	if len(my_elements) != 0:
 	    sms_gateway_message_id = my_elements[0].text
-            delivary_state = "successful"
+            delivery_state = "successful"
         
         #send a repsonse back saying how the sending went
         my_sms_response = sms_response()
-        my_sms_response.delivary_state = delivary_state
+        my_sms_response.delivery_state = delivery_state
         my_sms_response.response_string = response_string.text
         my_sms_response.human_read_error = human_read_error
         my_sms_response.message_id = sms_gateway_message_id
@@ -108,17 +108,17 @@ class twilio_core(models.Model):
             
     def _add_message(self, sms_message, account_id):
                         
-        delivary_state = ""
+        delivery_state = ""
 	if sms_message.find('Status').text == "failed":
-	    delivary_state = "failed"
+	    delivery_state = "failed"
         elif sms_message.find('Status').text == "sent":
-	    delivary_state = "successful"
+	    delivery_state = "successful"
 	elif sms_message.find('Status').text == "delivered":
-	    delivary_state = "DELIVRD"
+	    delivery_state = "DELIVRD"
 	elif sms_message.find('Status').text == "undelivered":
-	    delivary_state = "UNDELIV"
+	    delivery_state = "UNDELIV"
 	elif sms_message.find('Status').text == "received":
-	    delivary_state = "RECEIVED"
+	    delivery_state = "RECEIVED"
 	
         my_message = self.env['esms.history'].search([('sms_gateway_message_id','=', sms_message.find('Sid').text)])
         if len(my_message) == 0 and sms_message.find('Direction').text == "inbound":
@@ -150,27 +150,27 @@ class twilio_core(models.Model):
 	    #Create the sms record in history
 	    history_id = self.env['esms.history'].create({'account_id': account_id, 'status_code': "RECEIVED", 'gateway_id': twilio_gateway_id[0].id, 'from_mobile': sms_message.find('From').text, 'to_mobile': sms_message.find('To').text, 'sms_gateway_message_id': sms_message.find('Sid').text, 'sms_content': sms_message.find('Body').text, 'direction':'I', 'my_date':sms_message.find('DateUpdated').text, 'model_id':model_id.id, 'record_id':record_id, 'field_id':field_id.id})
                     
-    def delivary_receipt(self, account_sid, message_id):
+    def delivery_receipt(self, account_sid, message_id):
         my_account = self.env['esms.accounts'].search([('twilio_account_sid','=', account_sid)])[0]
         response_string = requests.get("https://api.twilio.com/2010-04-01/Accounts/" + my_account.twilio_account_sid + "/Messages/" + message_id, auth=(str(my_account.twilio_account_sid), str(my_account.twilio_auth_token)))
         root = etree.fromstring(str(response_string.text))
         
         
-        #map the Twilio delivary code to the esms delivary states 
-	delivary_state = ""
+        #map the Twilio delivery code to the esms delivery states 
+	delivery_state = ""
 	if root.xpath('//Status')[0].text == "failed":
-	    delivary_state = "failed"
+	    delivery_state = "failed"
 	elif root.xpath('//Status')[0].text == "sent":
-	    delivary_state = "successful"
+	    delivery_state = "successful"
 	elif root.xpath('//Status')[0].text == "delivered":
-	    delivary_state = "DELIVRD"
+	    delivery_state = "DELIVRD"
 	elif root.xpath('//Status')[0].text == "undelivered":
-	    delivary_state = "UNDELIV"
+	    delivery_state = "UNDELIV"
         
         my_message = self.env['esms.history'].search([('sms_gateway_message_id','=', message_id)])
         if len(my_message) > 0:
-            my_message[0].status_code = delivary_state
-            my_message[0].delivary_error_string = root.xpath('//ErrorMessage')[0].text        
+            my_message[0].status_code = delivery_state
+            my_message[0].delivery_error_string = root.xpath('//ErrorMessage')[0].text        
             
 class twilio_conf(models.Model):
 

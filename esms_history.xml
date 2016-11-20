@@ -18,11 +18,12 @@
       	              <field name="create_uid"/>
       	              <field name="direction"/>
       	              <field name="record_name"/>
-      	              <field name="from_mobile"/>
+                      <field name="from_mobile"/>
+      	              <field name="partner_id"/>
       	              <field name="to_mobile"/>
       	              <field name="status_string"/>
       	              <field name="status_code"/>
-      	              <field name="delivary_error_string"/>
+      	              <field name="delivery_error_string"/>
       	              <field name="sms_content"/>
       	          </group>
       	      </form>
@@ -39,7 +40,8 @@
       	          <field name="record_name"/>
       	          <field name="direction"/>
       	          <field name="my_date"/>
-      	          <field name="from_mobile"/>
+                  <field name="from_mobile"/>
+      	          <field name="partner_id"/>
       	          <field name="to_mobile"/>
       	          <field name="status_code"/>
       	          <field name="sms_content"/>

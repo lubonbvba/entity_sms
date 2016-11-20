@@ -12,7 +12,7 @@ class sms_response():
      response_code = ""
      human_read_error = ""
      message_id = ""
-     delivary_state = ""
+     delivery_state = ""
 
 class gsmmodem_core(models.Model):
 
@@ -87,10 +87,10 @@ class gsmmodem_core(models.Model):
     def receive_message(self,vals):
         self.env['esms.history'].create({
             'sms_content':vals['text'],
-            'to_mobile':'',
+            'to_mobile':vals['dst'],
             'direction': 'I',
-            'my_date': fields.Datetime.now(),
-            'from_mobile':vals['identity'],
+            'my_date': vals['dt'],
+            'from_mobile':vals['src'],
             'status_string': str(vals),
 #            'sms_gateway_message_id': vals['uuid'],
             })

@@ -19,6 +19,8 @@
 "access_esms_clickatell_user","access_esms_clickatell","model_esms_clickatell",base.group_user,1,0,0,0
 "access_esms_clickatell_system","access_esms_clickatell","model_esms_clickatell",base.group_system,1,1,1,1
 
+"access_esms_playsms_user","access_esms_playsms","model_esms_playsms",base.group_user,1,0,0,0
+"access_esms_playsms_system","access_esms_playsms","model_esms_playsms",base.group_system,1,1,1,1
 
 "access_esms_autoresponse_user","access_esms_autoresponse_user","model_esms_autoresponse","base.group_user",1,0,0,0
 "access_esms_autoresponse_system","access_esms_autoresponse_system","model_esms_autoresponse","base.group_system",1,1,1,1

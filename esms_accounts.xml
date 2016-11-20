@@ -12,7 +12,8 @@
                       <field name="priority"/>
       	              <field name="poll"/>
       	              <field name="gateway_model" invisible="1"/>
-      	          </group>
+                      <button name="check_messages" type="object" String="receive" groups="base.group_erp_manager,base.group_system"/>
+                  </group>
       	          <h2 id="gatewayhook">Gateway Settings</h2>
       	      </form>
       	  </field>

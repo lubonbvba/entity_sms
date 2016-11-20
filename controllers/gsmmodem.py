@@ -12,7 +12,7 @@ class MyController(http.Controller):
 	for field_name, field_value in kwargs.items():
             values[field_name] = field_value
         
-        request.env['esms.gsmmodem'].sudo().delivary_receipt(values['AccountSid'], values['MessageSid'])
+        request.env['esms.gsmmodem'].sudo().delivery_receipt(values['AccountSid'], values['MessageSid'])
         
         return "<Response></Response>"
         
@@ -21,7 +21,7 @@ class MyController(http.Controller):
         values = {}
         for field_name, field_value in kwargs.items():
             values[field_name] = field_value
-        #pdb.set_trace()   
+        pdb.set_trace()   
         request.env['esms.gsmmodem'].sudo().receive_message(values)
         
         return "<Response></Response>"

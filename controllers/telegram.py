@@ -12,7 +12,7 @@ class MyController(http.Controller):
 	for field_name, field_value in kwargs.items():
             values[field_name] = field_value
         
-        request.env['esms.telegram'].sudo().delivary_receipt(values['AccountSid'], values['MessageSid'])
+        request.env['esms.telegram'].sudo().delivery_receipt(values['AccountSid'], values['MessageSid'])
         
         return "<Response></Response>"
         

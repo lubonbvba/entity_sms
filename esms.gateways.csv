@@ -4,3 +4,5 @@
 "esms_smsglobal","esms.smsglobal","SMS GLOBAL"
 "esms_clickatell","esms.clickatell","Clickatell"
 "esms_telegram","esms.telegram","Telegram"
+"esms_playsms","esms.playsms","Play sms"
+"esms_voxbone","esms.voxbone","Voxbone"

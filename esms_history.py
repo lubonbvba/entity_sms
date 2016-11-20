@@ -3,6 +3,7 @@ import logging
 _logger = logging.getLogger(__name__)
 import requests
 from datetime import datetime
+import pdb
 
 class EsmsHistory(models.Model):
 
@@ -21,11 +22,12 @@ class EsmsHistory(models.Model):
     sms_content = fields.Text(string="SMS Message", readonly=True)
     record_name = fields.Char(string="Record Name", compute="_rec_nam")
     status_string = fields.Char(string="Response String", readonly=True)
-    status_code = fields.Selection((('RECEIVED','Received'), ('failed', 'Failed to Send'), ('queued', 'Queued'), ('successful', 'Sent'), ('DELIVRD', 'Delivered'), ('EXPIRED','Timed Out'), ('UNDELIV', 'Undelivered')), string='Delivary State', readonly=True)
+    status_code = fields.Selection((('RECEIVED','Received'), ('failed', 'Failed to Send'), ('queued', 'Queued'), ('successful', 'Sent'), ('DELIVRD', 'Delivered'), ('EXPIRED','Timed Out'), ('UNDELIV', 'Undelivered')), string='delivery State', readonly=True)
     sms_gateway_message_id = fields.Char(string="SMS Gateway Message ID", readonly=True)
     direction = fields.Selection((("I","INBOUND"),("O","OUTBOUND")), string="Direction", readonly=True)
     my_date = fields.Datetime(string="Send/Receive Date", readonly=True, help="The date and time the sms is received or sent")
-    delivary_error_string = fields.Text(string="Delivary Error")
+    delivery_error_string = fields.Text(string="delivery Error")
+    partner_id = fields.Many2one('res.partner')
 
     @api.one
     @api.depends('to_mobile')
@@ -42,21 +44,31 @@ class EsmsHistory(models.Model):
     @api.model
     def create(self, values):
         new_rec = super(EsmsHistory, self).create(values)
-        
+
         autoreslist = self.env['esms.autoresponse'].search([('from_mobile','=',new_rec.to_mobile), ('keyword','=ilike',new_rec.sms_content)])
-	if len(autoreslist) > 0 and new_rec.direction == 'I':
-	    autores = autoreslist[0]
-	    my_sms = self.env[new_rec.account_id.account_gateway.gateway_model_name].send_message(new_rec.account_id.id, new_rec.to_mobile, new_rec.from_mobile, autores.sms_content, new_rec.model_id.model, new_rec.record_id, new_rec.field_id.name)
-	                
-	    esms_history = self.env['esms.history'].create({'record_id': new_rec.record_id,'model_id':new_rec.model_id.id,'account_id':new_rec.account_id.id,'from_mobile':new_rec.from_mobile,'to_mobile':new_rec.to_mobile,'sms_content':autores.sms_content,'status_string':my_sms.response_string, 'direction':'O','my_date':datetime.utcnow(), 'status_code':my_sms.delivary_state, 'sms_gateway_message_id':my_sms.message_id, 'gateway_id': new_rec.account_id.account_gateway.id})
+        if len(autoreslist) > 0 and new_rec.direction == 'I':
+           autores = autoreslist[0]
+           my_sms = self.env[new_rec.account_id.account_gateway.gateway_model_name].send_message(new_rec.account_id.id, new_rec.to_mobile, new_rec.from_mobile, autores.sms_content, new_rec.model_id.model, new_rec.record_id, new_rec.field_id.name)
+                    
+           esms_history = self.env['esms.history'].create({'record_id': new_rec.record_id,'model_id':new_rec.model_id.id,'account_id':new_rec.account_id.id,'from_mobile':new_rec.from_mobile,'to_mobile':new_rec.to_mobile,'sms_content':autores.sms_content,'status_string':my_sms.response_string, 'direction':'O','my_date':datetime.utcnow(), 'status_code':my_sms.delivery_state, 'sms_gateway_message_id':my_sms.message_id, 'gateway_id': new_rec.account_id.account_gateway.id})
             
             #record the message in the communication log
-            if new_rec.model_id.model == "res.partner": 
-                self.env['res.partner'].browse(new_rec.record_id).message_post(body=autores.sms_content, subject="SMS Auto Response")
+           if new_rec.model_id.model == "res.partner":
+            self.env['res.partner'].browse(new_rec.record_id).message_post(body=autores.sms_content, subject="SMS Auto Response")
 
-	
-	if new_rec.sms_content == 'STOP' and new_rec.direction == 'I' and new_rec.model_name == 'res.partner':
-	    for rec in self.env['res.partner'].search([('id','=',new_rec.record_id)]):
-	        rec.sms_opt_out = True
-	        #Send opt out response
+
+        if new_rec.sms_content == 'STOP' and new_rec.direction == 'I' and new_rec.model_name == 'res.partner':
+           for rec in self.env['res.partner'].search([('id','=',new_rec.record_id)]):
+                rec.sms_opt_out = True
+               #Send opt out response
                 self.env[new_rec.account_id.account_gateway.gateway_model_name].send_message(new_rec.account_id.id, new_rec.to_mobile, new_rec.from_mobile, 'You have been unsubscribed from mass sms', new_rec.model_id.model, new_rec.record_id, new_rec.field_id.name)
+
+        if new_rec.direction == 'I':
+            partners=self.env['res.partner'].search([('mobile_e164', 'ilike',new_rec.from_mobile)])
+            for partner in partners:
+                new_rec.partner_id=partner
+                partner.message_post(body=new_rec.sms_content, subject="SMS received")
+
+
+
+

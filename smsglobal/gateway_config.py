@@ -5,7 +5,7 @@ import requests
 from datetime import datetime
 
 class sms_response():
-     delivary_state = ""
+     delivery_state = ""
      response_string = ""
      human_read_error = ""
      message_id = ""
@@ -36,7 +36,7 @@ class smsglobal_core(models.Model):
         
         #Analyse the reponse string and determine if it sent successfully other wise return a human readable error message   
         human_read_error = ""
-        delivary_state = "failed"
+        delivery_state = "failed"
         if response_string.text == "ERROR: 88":
 	    human_read_error = "INSUFFICIENT CREDIT"
 	elif "ERROR: 40" in response_string.text:
@@ -46,14 +46,14 @@ class smsglobal_core(models.Model):
 	elif "ERROR" in response_string.text:
 	    human_read_error = "FAILED DELIVERY"
 	else:
-	    delivary_state = "successful"
+	    delivery_state = "successful"
        
-        #The message id is important for delivary reports also set delivary_state=successful
+        #The message id is important for delivery reports also set delivery_state=successful
 	sms_gateway_message_id = response_string.text.split('SMSGlobalMsgID:')[1]    
                 
         #send a repsonse back saying how the sending went
         my_sms_response = sms_response()
-        my_sms_response.delivary_state = delivary_state
+        my_sms_response.delivery_state = delivery_state
         my_sms_response.response_string = response_string.text
         my_sms_response.human_read_error = human_read_error
         my_sms_response.message_id = sms_gateway_message_id

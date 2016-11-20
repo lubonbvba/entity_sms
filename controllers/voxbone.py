@@ -9,10 +9,11 @@ class MyController(http.Controller):
     @http.route('/sms/voxbone/receipt', type="http", auth="public")
     def sms_voxbone_receipt(self, **kwargs):
         values = {}
+        pdb.set_trace()
 	for field_name, field_value in kwargs.items():
             values[field_name] = field_value
         
-        request.env['esms.voxbone'].sudo().delivary_receipt(values['AccountSid'], values['MessageSid'])
+        request.env['esms.voxbone'].sudo().delivery_receipt(values['AccountSid'], values['MessageSid'])
         
         return "<Response></Response>"
         

@@ -1,6 +1,6 @@
 {
     'name': "Entity SMS",
-    'version': "2.9.17",
+    'version': "2.9.18",
     'author': "Sythil, Lubon bvba",
     'category': "Tools",
     'summary': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
@@ -26,7 +26,9 @@
         'smsglobal/gateway_config.xml',
         'twilio/gateway_config.xml',
         'clickatell/gateway_config.xml',
+        'playsms/gateway_config.xml',
         'telegram/gateway_config.xml',
+        'voxbone/gateway_config.xml',
         'ir_actions.xml',
         'esms_settings.xml',
     ],

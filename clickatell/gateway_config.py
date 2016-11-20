@@ -9,7 +9,7 @@ class sms_response():
      response_string = ""
      response_code = ""
      human_read_error = ""
-     delivary_state = ""
+     delivery_state = ""
      message_id = ""
 
 class clickatell_core(models.Model):

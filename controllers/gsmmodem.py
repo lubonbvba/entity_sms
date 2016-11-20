@@ -21,7 +21,7 @@ class MyController(http.Controller):
         values = {}
         for field_name, field_value in kwargs.items():
             values[field_name] = field_value
-        pdb.set_trace()   
+           
         request.env['esms.gsmmodem'].sudo().receive_message(values)
         
         return "<Response></Response>"

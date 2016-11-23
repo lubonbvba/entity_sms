@@ -85,15 +85,17 @@ class gsmmodem_core(models.Model):
 
     #            history_id = self.env['esms.history'].create(vals)
     def receive_message(self,vals):
-        self.env['esms.history'].create({
+        new_message={
             'sms_content':vals['text'],
             'to_mobile':vals['dst'],
             'direction': 'I',
-            'my_date': vals['dt'],
             'from_mobile':vals['src'],
             'status_string': str(vals),
 #            'sms_gateway_message_id': vals['uuid'],
-            })
+            }
+        if 'ep' in vals.keys():
+            new_message["my_date"]=strftime("%Y-%m-%d %H:%M:%S", vals["ep"]+3600)    
+        self.env['esms.history'].create(new_message)
 
 
 class gsmmodem_conf(models.Model):

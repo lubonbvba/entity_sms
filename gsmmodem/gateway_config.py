@@ -96,7 +96,7 @@ class gsmmodem_core(models.Model):
         #pdb.set_trace()
 
         if 'ep' in vals.keys():
-            new_message["my_date"]=strftime("%Y-%m-%d %H:%M:%S", gmtime(3600+float(vals["ep"])))    
+            new_message["my_date"]=strftime("%Y-%m-%d %H:%M:%S", gmtime(float(vals["ep"])))    
         self.env['esms.history'].create(new_message)
 
 

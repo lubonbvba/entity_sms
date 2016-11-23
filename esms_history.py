@@ -67,7 +67,10 @@ class EsmsHistory(models.Model):
             partners=self.env['res.partner'].search([('mobile_e164', 'ilike',new_rec.from_mobile)])
             for partner in partners:
                 new_rec.partner_id=partner
-                partner.message_post(body=new_rec.sms_content, subject="SMS received")
+                partner.message_post(body=new_rec.sms_content,
+                 subject="SMS received", 
+                 type = 'comment',
+                 subtype = "mail.mt_comment")
 
 
 

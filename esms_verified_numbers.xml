@@ -7,15 +7,22 @@
           <field name="model">esms.verified.numbers</field>
           <field name="arch" type="xml">
       	      <form>
+
       	          <header>
       	              <button name="send_mobile_verify" type="object" string="Test Mobile Number" help="Sends an sms from this number to this number to test if the system can receive smses"/>
       	          </header>
+                  <sheet>
       	          <group>
       	              <field name="name"/>
                       <field name="mobile_number"/>
                       <field name="account_id"/>
                       <field name="mobile_verified"/>
       	          </group>
+                                    </sheet>
+                        <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                        </div>
       	      </form>
       	  </field>
       </record>

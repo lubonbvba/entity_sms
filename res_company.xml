@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record model="ir.ui.view" id="esms_company_settings">
+            <field name="name">esms.company.settings</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form"/>
+            <field name="arch" type="xml">
+			<xpath expr="//group[@name='account_grp']" position="after">
+				                    <group name="esms_grp" string="SMS Settings">
+                        <field name="esms_default_sender"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

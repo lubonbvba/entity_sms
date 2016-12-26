@@ -2,9 +2,10 @@ from openerp import models, fields, api
 import logging
 _logger = logging.getLogger(__name__)
 import requests, json
-from datetime import datetime
-from time import gmtime, strftime
+from datetime import datetime, timedelta
+#from time import gmtime, strftime,strptime
 import pdb
+import time
 
 class sms_response():
      response_string = ""
@@ -19,7 +20,7 @@ class playsms_core(models.Model):
     
     api_url = fields.Char(string='API URL')
     
-    def send_message(self, sms_gateway_id, from_number, to_number, sms_content, my_model_name, my_record_id, my_field_name):
+    def send_message(self, sms_gateway_id, from_number, to_number, sms_content, my_model_name, my_record_id, my_field_name, answer_timeout=0):
         sms_account = self.env['esms.accounts'].search([('id','=',sms_gateway_id)])
        
         format_number = to_number
@@ -36,17 +37,20 @@ class playsms_core(models.Model):
         my_model = self.env['ir.model'].search([('model','=',my_model_name)])
         my_field = self.env['ir.model.fields'].search([('name','=',my_field_name)])
         history= {
-                'field_id':my_field[0].id, 
-                'record_id': my_record_id,
-                'model_id':my_model[0].id,
                 'account_id':sms_account.id,
                 'from_mobile':from_number,
                 'to_mobile':to_number,
                 'sms_content':sms_content,
                 'status_string':response_string.text,
                 'direction':'O','my_date':datetime.utcnow(),
+                'answer_timeout': answer_timeout
 
         }
+#
+#                        'field_id':my_field[0].id, 
+#                'record_id': my_record_id,
+#                'model_id':my_model[0].id,
+
         if response_json['error_string'] == None:
             response_code = "SUCCESSFUL"
             history['status_code']='successful'
@@ -60,11 +64,12 @@ class playsms_core(models.Model):
 
 #        if response_code == "SUCCESSFUL":
         esms_history = self.env['esms.history'].create(history)
-        
+
         my_sms_response = sms_response()
         my_sms_response.response_string = response_json['error_string']
         my_sms_response.response_code = response_code
         my_sms_response.delivery_state = history['status_code']
+
         
         return my_sms_response
 
@@ -89,6 +94,10 @@ class playsms_core(models.Model):
         if ('data' in response.keys()):
             for message in response['data']:
                 if len(self.env['esms.history'].search([('sms_gateway_message_id','=',message['id'])])) == 0:
+                    t=time.mktime(time.strptime(message['dt'],"%Y-%m-%d %H:%M:%S"))
+                    t_new=time.strftime("%Y-%m-%d %H:%M:%S",  time.gmtime(float(3600 +t)))
+                    #pdb.set_trace()
+
                     vals={
                     'sms_gateway_message_id':message['id'],
                     'account_id': sms_account.id,
@@ -96,7 +105,7 @@ class playsms_core(models.Model):
                     'status_string': str(message),
                     'from_mobile':message['src'],
                     'to_mobile':message['dst'],
-                    'my_date': message['dt'],
+                    'my_date': t_new,
                     'sms_content': message['msg'],
                     }
                     history_id = self.env['esms.history'].create(vals)

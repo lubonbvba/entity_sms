@@ -12,10 +12,8 @@ class res_partner_esms(models.Model):
     sms_opt_out = fields.Boolean(string="SMS Opt Out", help="If true the partner can't be sent mass sms, regular sms is stil fine though")    
     mobile_e164 = fields.Char(string="Mobile e164", store=True, compute='_calc_e164')
     telegram_chat_id=fields.Char(help="Telegram chat id")
-
     @api.multi
     def esms_action(self):
-        
         if len(self.env.context['active_ids']) > 1:
             mass_sms = self.env['esms.mass.sms'].create({'mass_sms_state':'draft'})
             for rec_id in self.env.context['active_ids']:

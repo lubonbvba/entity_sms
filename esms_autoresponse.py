@@ -11,4 +11,4 @@ class esms_autoresponse(models.Model):
     
     from_mobile = fields.Char(string='Mobile Number', required=True)
     keyword = fields.Char(string="Keyword", required=True)
-    sms_content = fields.Char(string="SMS Message", reqquired=True)
+    sms_content = fields.Char(string="SMS Message", required=True)

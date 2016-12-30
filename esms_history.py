@@ -86,6 +86,8 @@ class EsmsHistory(models.Model):
                  type = 'comment',
                  subtype = "mail.mt_comment")
 
+        return new_rec
+
 
 
 

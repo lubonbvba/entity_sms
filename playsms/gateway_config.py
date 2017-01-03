@@ -1,7 +1,7 @@
 from openerp import models, fields, api
 import logging
 _logger = logging.getLogger(__name__)
-import requests, json
+import requests, json, urllib
 from datetime import datetime, timedelta
 #from time import gmtime, strftime,strptime
 import pdb
@@ -23,11 +23,15 @@ class playsms_core(models.Model):
     def send_message(self, sms_gateway_id, from_number, to_number, sms_content, my_model_name, my_record_id, my_field_name, answer_timeout=0):
         sms_account = self.env['esms.accounts'].search([('id','=',sms_gateway_id)])
        
+
+
         format_number = to_number
         if " " in format_number: format_number.replace(" ", "")
-    #    if "+" in format_number: format_number = format_number.replace("+", "")
+        sms_content=urllib.quote(sms_content)
+
         playsms_url=sms_account.playsms_baseurl + "/index.php?app=ws&op=pv&u=" + sms_account.playsms_username + "&h="  + sms_account.playsms_api_token
-        playsms_url +=  "&to=" + str(format_number) + "&msg=" + str(sms_content)
+        playsms_url +=  "&to=" + str(format_number) + "&msg=" 
+        playsms_url += sms_content#.decode("utf-8")
         #pdb.set_trace()
        
         response_string = requests.get(playsms_url)

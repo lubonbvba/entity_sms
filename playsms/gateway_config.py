@@ -27,12 +27,12 @@ class playsms_core(models.Model):
 
         format_number = to_number
         if " " in format_number: format_number.replace(" ", "")
-        sms_content=urllib.quote(sms_content)
+        sms_content_quoted=urllib.quote(sms_content)
 
         playsms_url=sms_account.playsms_baseurl + "/index.php?app=ws&op=pv&u=" + sms_account.playsms_username + "&h="  + sms_account.playsms_api_token
         playsms_url +=  "&to=" + str(format_number) + "&msg=" 
-        playsms_url += sms_content#.decode("utf-8")
-        #pdb.set_trace()
+        playsms_url += sms_content_quoted
+        
        
         response_string = requests.get(playsms_url)
         response_json=json.loads(response_string.content)

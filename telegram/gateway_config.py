@@ -59,7 +59,7 @@ class telegram_core(models.Model):
         return my_sms_response
        
     def check_messages(self, account_id=None, message_id=""):
-        pdb.set_trace()
+        #pdb.set_trace()
         if not account_id:
             account_id=self.env.context['active_id']
        

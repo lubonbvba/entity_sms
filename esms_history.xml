@@ -52,6 +52,25 @@
       	      </tree>
       	  </field>
       </record>
+      <record model="ir.ui.view" id="esms_history_search_view">
+          <field name="name">esms history search view</field>
+          <field name="model">esms.history</field>
+          <field name="arch" type="xml">
+            <search>
+               <field name="create_uid"/>
+               <field name="my_date"/>
+               <field name="direction"/>
+               <field name="from_mobile"/>
+               <field name="to_mobile"/>
+               <group expand="0" string="Group By">
+               <filter name="by_direction" string="Direction" context="{'group_by': 'direction'}"/>
+               <filter name="by_tomobile" string="To" context="{'group_by': 'to_mobile'}"/>
+               <filter name="by_date" string="Date" context="{'group_by': 'my_date:day'}"/>
+             </group>
+            </search>
+          </field>
+      </record>
+
 
         <record model="ir.ui.view" id="esms_history_kanban_view">
             <field name="name">esms.history.kanban</field>

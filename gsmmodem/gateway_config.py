@@ -88,6 +88,7 @@ class gsmmodem_core(models.Model):
         new_message={
             'sms_content':vals['text'],
             'to_mobile':vals['dst'],
+            'account_id': 1,
             'direction': 'I',
             'from_mobile':vals['src'],
             'status_string': str(vals),

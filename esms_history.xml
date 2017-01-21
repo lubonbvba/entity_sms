@@ -29,6 +29,7 @@
                       <field name="answer_expected"/>
                       <field name="answer_message"/>
       	              <field name="thread_closed"/>
+                      <field name="service_message"/>
       	          </group>
       	      </form>
       	  </field>
@@ -49,6 +50,7 @@
       	          <field name="to_mobile"/>
       	          <field name="status_code"/>
       	          <field name="sms_content"/>
+                  <field name="service_message"/>
       	      </tree>
       	  </field>
       </record>

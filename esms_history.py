@@ -32,6 +32,7 @@ class EsmsHistory(models.Model):
     answer_expected =  fields.Boolean(default=False)
     answer_message =  fields.Many2one('esms.history')
     thread_closed = fields.Boolean(default=False)
+    service_message=fields.Boolean(help="True if it is a service message that can be ignored in processing")
 
     @api.one
     @api.depends('to_mobile')
@@ -71,20 +72,27 @@ class EsmsHistory(models.Model):
         if new_rec.direction == 'I':
             partner_name="Unknown"
             partners=self.env['res.partner'].search([('mobile_e164', 'ilike',new_rec.from_mobile)])
+
             for partner in partners:
                 partner_name=partner.name
                 new_rec.partner_id=partner
-                partner.message_post(body=new_rec.sms_content,
-                 subject="SMS received", 
-                 type = 'comment',
-                 subtype = "mail.mt_comment")
+                #pdb.set_trace()
+                if partner==self.account_id.browse(values['account_id']).keep_alive_partner_id and self.account_id.browse(values['account_id']).keep_alive_string in new_rec.sms_content:
+                    self.account_id.browse(values['account_id']).last_keep_alive_received=fields.Datetime.now()
+                    new_rec.service_message=True
+                    #pdb.set_trace()
+                else:
+                    partner.message_post(body=new_rec.sms_content,
+                    subject="SMS received", 
+                    type = 'comment',
+                    selfubtype = "mail.mt_comment")
             #pdb.set_trace()   
-            incoming_number=self.env['esms.verified.numbers'].search([('mobile_number','ilike',new_rec.to_mobile) ]) 
-            for n in incoming_number:
-                n.message_post(body=new_rec.sms_content,
-                 subject="SMS received from: " + partner_name + " " +  new_rec.from_mobile,
-                 type = 'comment',
-                 subtype = "mail.mt_comment")
+                incoming_number=self.env['esms.verified.numbers'].search([('mobile_number','ilike',new_rec.to_mobile) ]) 
+                for n in incoming_number:
+                    n.message_post(body=new_rec.sms_content,
+                        subject="SMS received from: " + partner_name + " " +  new_rec.from_mobile,
+                        type = 'comment',
+                        subtype = "mail.mt_comment")
 
         return new_rec
 

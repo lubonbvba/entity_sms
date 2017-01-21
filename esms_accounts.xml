@@ -6,14 +6,29 @@
           <field name="model">esms.accounts</field>
           <field name="arch" type="xml">
       	      <form>
-      	          <group>
+                <group>
+      	          <group string="General settings">
       	              <field name="name"/>
       	              <field name="account_gateway" widget="selection"/>
                       <field name="priority"/>
-      	              <field name="poll"/>
+                      <field name="poll"/>
       	              <field name="gateway_model" invisible="1"/>
                       <button name="check_messages" type="object" String="receive" groups="base.group_erp_manager,base.group_system"/>
+
                   </group>
+                  <group string="Keep alive settings">
+                    <field name="keep_alive"/>
+                    <field name="keep_alive_problem"/>
+                    <field name="keep_alive_partner_id" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="keep_alive_sender" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="keep_alive_minutes" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="keep_alive_timeout" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="keep_alive_string" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="last_keep_alive_sent" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <field name="last_keep_alive_received" attrs="{'invisible':[('keep_alive','=',False)]}"/>
+                    <button name="send_keep_alive" type="object" String="Test" groups="base.group_erp_manager,base.group_system"/>
+                   </group>
+                   </group> 
       	          <h2 id="gatewayhook">Gateway Settings</h2>
       	      </form>
       	  </field>
@@ -29,7 +44,9 @@
       	          <field name="priority"/>
       	          <field name="name"/>
                   <field name="account_gateway"/>
-      	          <field name="poll"/>
+                  <field name="poll"/>
+                  <field name="keep_alive"/>
+      	          <field name="keep_alive_problem"/>
       	      </tree>
       	  </field>
       </record>

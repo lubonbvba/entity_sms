@@ -28,7 +28,6 @@ class playsms_core(models.Model):
         format_number = to_number
         if " " in format_number: format_number.replace(" ", "")
         sms_content_quoted=urllib.quote(sms_content)
-
         playsms_url=sms_account.playsms_baseurl + "/index.php?app=ws&op=pv&u=" + sms_account.playsms_username + "&h="  + sms_account.playsms_api_token
         playsms_url +=  "&to=" + str(format_number) + "&msg=" 
         playsms_url += sms_content_quoted

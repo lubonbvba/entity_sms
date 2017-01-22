@@ -56,13 +56,14 @@ class esms_accounts(models.Model):
             if account.keep_alive_minutes < ((datetime.strptime(fields.Datetime.now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(account.last_keep_alive_sent,"%Y-%m-%d %H:%M:%S")).seconds/60):
                 account.send_keep_alive()
             #pdb.set_trace()
-            if (account.keep_alive_timeout < ((datetime.strptime(fields.Datetime.now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(account.last_keep_alive_received,"%Y-%m-%d %H:%M:%S")).seconds/60)) and (account.keep_alive_problem == False):
-                _logger.info ("SMS Keep alive timeout")
-                account.keep_alive_problem=True
-                account.keep_alive_partner_id.message_post(body="Missing keepalive, time in UTC!",
-                    subject="[Problem] Last keepalive received: " + account.last_keep_alive_received,
-                    type = 'comment',
-                    subtype = "mail.mt_comment")
+            if (account.keep_alive_timeout < ((datetime.strptime(fields.Datetime.now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(account.last_keep_alive_received,"%Y-%m-%d %H:%M:%S")).seconds/60)):
+                if not account.keep_alive_problem:
+                    _logger.info ("SMS Keep alive timeout")
+                    account.keep_alive_problem=True
+                    account.keep_alive_partner_id.message_post(body="Missing keepalive, time in UTC!",
+                        subject="[Problem] Last keepalive received: " + account.last_keep_alive_received,
+                        type = 'comment',
+                        subtype = "mail.mt_comment")
             else:
                 if account.keep_alive_problem:
                     account.keep_alive_partner_id.message_post(body="Keepalive repaired, time in UTC!",

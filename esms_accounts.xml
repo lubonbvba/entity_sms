@@ -22,7 +22,6 @@
                     <field name="keep_alive_partner_id" attrs="{'invisible':[('keep_alive','=',False)]}"/>
                     <field name="keep_alive_sender" attrs="{'invisible':[('keep_alive','=',False)]}"/>
                     <field name="keep_alive_minutes" attrs="{'invisible':[('keep_alive','=',False)]}"/>
-                    <field name="keep_alive_timeout" attrs="{'invisible':[('keep_alive','=',False)]}"/>
                     <field name="keep_alive_string" attrs="{'invisible':[('keep_alive','=',False)]}"/>
                     <field name="last_keep_alive_sent" attrs="{'invisible':[('keep_alive','=',False)]}"/>
                     <field name="last_keep_alive_received" attrs="{'invisible':[('keep_alive','=',False)]}"/>

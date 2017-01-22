@@ -17,7 +17,7 @@ class esms_accounts(models.Model):
     poll=fields.Boolean(help="Include this account in poll cycle?", default=False)
     keep_alive=fields.Boolean(help="Send keep alive messages", default=False)
     keep_alive_minutes=fields.Integer(help="Keep alive interval", default=60)
-    keep_alive_timeout=fields.Integer(help="Keep alive timeout", default=5)
+    #keep_alive_timeout=fields.Integer(help="Keep alive timeout", default=5)
     keep_alive_string=fields.Char(help="String to begin keepalive message, eg for routing purposes")
     last_keep_alive_sent=fields.Datetime()
     last_keep_alive_received=fields.Datetime()
@@ -55,22 +55,24 @@ class esms_accounts(models.Model):
         for account in my_accounts:
             if account.keep_alive_minutes < ((datetime.strptime(fields.Datetime.now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(account.last_keep_alive_sent,"%Y-%m-%d %H:%M:%S")).seconds/60):
                 account.send_keep_alive()
-            #pdb.set_trace()
-            if (account.keep_alive_timeout < ((datetime.strptime(fields.Datetime.now(),"%Y-%m-%d %H:%M:%S") - datetime.strptime(account.last_keep_alive_received,"%Y-%m-%d %H:%M:%S")).seconds/60)):
-                if not account.keep_alive_problem:
-                    _logger.info ("SMS Keep alive timeout")
-                    account.keep_alive_problem=True
-                    account.keep_alive_partner_id.message_post(body="Missing keepalive, time in UTC!",
-                        subject="[Problem] Last keepalive received: " + account.last_keep_alive_received,
-                        type = 'comment',
-                        subtype = "mail.mt_comment")
-            else:
-                if account.keep_alive_problem:
-                    account.keep_alive_partner_id.message_post(body="Keepalive repaired, time in UTC!",
-                        subject="[Repaired] Last keepalive received: " + account.last_keep_alive_received,
-                        type = 'comment',
-                        subtype = "mail.mt_comment")
-                    account.keep_alive_problem=False
+                #no check immediate after sending sms.
+            else:     
+                #pdb.set_trace()
+                if datetime.strptime(account.last_keep_alive_received,"%Y-%m-%d %H:%M:%S") < datetime.strptime(account.last_keep_alive_sent,"%Y-%m-%d %H:%M:%S"):
+                    if not account.keep_alive_problem:
+                        _logger.info ("SMS Keep alive timeout")
+                        account.keep_alive_problem=True
+                        account.keep_alive_partner_id.message_post(body="Missing keepalive, time in UTC!",
+                            subject="[Problem] Last keepalive received: " + account.last_keep_alive_received,
+                            type = 'comment',
+                            subtype = "mail.mt_comment")
+                else:
+                    if account.keep_alive_problem:
+                        account.keep_alive_partner_id.message_post(body="Keepalive repaired, time in UTC!",
+                            subject="[Repaired] Last keepalive received: " + account.last_keep_alive_received,
+                            type = 'comment',
+                            subtype = "mail.mt_comment")
+                        account.keep_alive_problem=False
 
 
 

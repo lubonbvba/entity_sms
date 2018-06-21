@@ -7,8 +7,8 @@ from datetime import datetime
 class esms_mass_sms(models.Model):
 
     _name = "esms.mass.sms"
-    
-    from_mobile = fields.Many2one('esms.verified.numbers', string="From Mobile", domain="[('mobile_verified','=','True')]")
+    name=fields.Char()
+    from_mobile = fields.Many2one('esms.verified.numbers', string="From Mobile", domain="[('mobile_verified','=','True')]", required=True)
     selected_records = fields.Many2many('res.partner', string="Selected Records", domain="[('sms_opt_out','=',False),('mobile','!=','')]")
     message_text = fields.Text(string="Message Text")
     total_count = fields.Integer(string="Total", compute="_total_count")
@@ -21,7 +21,7 @@ class esms_mass_sms(models.Model):
     sub_object = fields.Many2one('ir.model', string='Sub-model', readonly=True, help="When a relationship field is selected as first field, this field shows the document model the relationship goes to.")
     sub_model_object_field = fields.Many2one('ir.model.fields', string='Sub-field', help="When a relationship field is selected as first field, this field lets you select the target field within the destination document model (sub-model).")
     copyvalue = fields.Char(string='Placeholder Expression', help="Final placeholder expression, to be copy-pasted in the desired template field.")
-
+    template_id = fields.Many2one('esms.templates', string="Template")
     
     @api.one
     @api.onchange('model_object_field')
@@ -70,12 +70,22 @@ class esms_mass_sms(models.Model):
 
             message_final = sms_rendered_content + "\n\nReply STOP to stop receiving sms"
             gateway_model = self.from_mobile.account_id.account_gateway.gateway_model_name
-	    my_sms = self.env[gateway_model].send_message(self.from_mobile.account_id.id, self.from_mobile.mobile_number, rec.mobile_e164, message_final, "esms.mass.sms", self.id, "mobile")
+            my_sms = self.env[gateway_model].send_message(self.from_mobile.account_id.id, self.from_mobile.mobile_number, rec.mobile_e164, message_final, "esms.mass.sms", self.id, "mobile",rec.id)
             my_model = self.env['ir.model'].search([('model','=','res.partner')])
             
             #unlike single sms we record down failed attempts to send since mass sms works in a "best try" matter, while single sms works in a "try again" matter.
-            esms_history = self.env['esms.history'].create({'mass_sms_id': self.id, 'record_id': rec.id,'model_id':my_model[0].id,'account_id':self.from_mobile.account_id.id,'from_mobile':self.from_mobile.mobile_number,'to_mobile':rec.mobile_e164,'sms_content':message_final,'status_string':my_sms.response_string, 'direction':'O','my_date':datetime.utcnow(), 'status_code':my_sms.delivery_state, 'sms_gateway_message_id':my_sms.message_id, 'gateway_id': self.from_mobile.account_id.account_gateway.id})
-            
+        #    esms_history = self.env['esms.history'].create({'mass_sms_id': self.id, 'record_id': rec.id,'model_id':my_model[0].id,'account_id':self.from_mobile.account_id.id,'from_mobile':self.from_mobile.mobile_number,'to_mobile':rec.mobile_e164,'sms_content':message_final,'status_string':my_sms.response_string, 'direction':'O','my_date':datetime.utcnow(), 'status_code':my_sms.delivery_state, 'sms_gateway_message_id':my_sms.message_id, 'gateway_id': self.from_mobile.account_id.account_gateway.id})
+
             #record the message in the communication log
             self.env['res.partner'].browse(rec.id).message_post(body=message_final, subject="Mass SMS Sent")
+
+    @api.onchange('template_id')
+    def load_template(self):
+        if self.template_id.id != False:
+            
+            self.message_text = self.template_id.template_body
+            self.from_mobile = self.template_id.from_mobile.id
+#            self.sms_content = sms_rendered_content
+#            self.to_number= sms_rendered_to
+#            self.sms_gateway = self.template_id.account_gateway.id
         

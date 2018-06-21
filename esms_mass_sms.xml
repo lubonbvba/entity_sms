@@ -30,6 +30,7 @@
                             <page string="Content">
 
       	              <group>
+                          <field name="template_id" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}"/>
       	                  <field name="from_mobile" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}"/>
       	                  <field name="selected_records" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}" context="{'search_default_customer':True}">
       	                      <tree>

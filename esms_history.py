@@ -85,7 +85,7 @@ class EsmsHistory(models.Model):
                     partner.message_post(body=new_rec.sms_content,
                     subject="SMS received", 
                     type = 'comment',
-                    selfubtype = "mail.mt_comment")
+                    subype = "mail.mt_comment")
             #pdb.set_trace()   
                 incoming_number=self.env['esms.verified.numbers'].search([('mobile_number','ilike',new_rec.to_mobile) ]) 
                 for n in incoming_number:
@@ -93,6 +93,12 @@ class EsmsHistory(models.Model):
                         subject="SMS received from: " + partner_name + " " +  new_rec.from_mobile,
                         type = 'comment',
                         subtype = "mail.mt_comment")
+        if new_rec.direction =='O':
+            if ('partner_id' in values.keys() and values['partner_id']):
+                    new_rec.partner_id.message_post(body="From: %s\n\r%s" % (new_rec.from_mobile,new_rec.sms_content),
+                        subject="SMS sent from account:%s " % (new_rec.account_id.name) , 
+                        type = 'comment',
+                        subype = "mail.mt_comment")
 
         return new_rec
 

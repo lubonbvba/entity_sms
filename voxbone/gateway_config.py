@@ -6,6 +6,7 @@ from datetime import datetime
 from time import gmtime, strftime
 import json
 import pdb
+from requests.auth import HTTPDigestAuth
 
 class sms_response():
      response_string = ""
@@ -21,40 +22,67 @@ class voxbone_core(models.Model):
     api_url = fields.Char(string='API URL', default="https://api.voxbone.org")
 
     
-    def send_message(self, sms_gateway_id,from_number,to_number, sms_content, my_model_name, my_record_id, my_field_name):
+    def send_message(self, sms_gateway_id,from_number,to_number, sms_content, my_model_name, my_record_id, my_field_name,partner_id=None):
         sms_account = self.env['esms.accounts'].search([('id','=',sms_gateway_id)])
        
         format_number = to_number
         if " " in format_number: format_number.replace(" ", "")
         if "+" in format_number: format_number = format_number.replace("+", "")
-        voxbone_url = "http://api.voxbone.com/http/sendmsg?user=" + str(sms_account.voxbone_username) + "&password=" + str(sms_account.voxbone_password) + "&api_id=" + str(sms_account.voxbone_api_id) + "&from=" + str(self.env.user.partner_id.mobile) + "&to=" + str(format_number) + "&text=" + str(sms_content)
+        voxbone_url=sms_account.voxbone_url + format_number
+        body={
+            'from':from_number,
+            'msg': sms_content,
+            'delivery_report': 'none',
+        }
+        headers={
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
 
-        voxbone_url="https://api.voxbone.org/" + str(sms_account.voxbone_api_id) + "/sendMessage" 
-        voxbone_url+="?chat_id=" + str(to_number)
-        voxbone_url+="&text=" + str(sms_content)
-        response_string = requests.get(voxbone_url)
-        #pdb.set_trace()
+        response = requests.post(voxbone_url,
+            auth=HTTPDigestAuth(sms_account.voxbone_user,sms_account.voxbone_password),
+            json=body,
+            headers=headers)
 
         response_code = ""
-        if "ERR: 002" in response_string.text:
-	    response_code = "BAD CREDENTIALS"
-	elif "ERR: 301" in response_string.text:
-	    response_code = "INSUFFICIENT CREDIT"
-	elif "ERR:" in response_string.text:
-	    response_code = "FAILED DELIVERY"
-	else:
-	    response_code = "SUCCESSFUL"
+        if "202" in response.text:
+            response_code = "SUCCESSFUL"
+        else:
+            response_code = "UNKNOWN"
         
         #pdb.set_trace()   
         
         my_model = self.env['ir.model'].search([('model','=',my_model_name)])
         my_field = self.env['ir.model.fields'].search([('name','=',my_field_name)])
-        
-        if response_code == "SUCCESSFUL":
-            esms_history = self.env['esms.history'].create({'field_id':my_field[0].id, 'record_id': my_record_id,'model_id':my_model[0].id,'account_id':sms_account.id,'from_mobile':self.env.user.partner_id.mobile, 'to_mobile':to_number,'sms_content':sms_content,'status_string':response_string.text, 'direction':'O','my_date':datetime.utcnow(), 'status_code':'successful'})
-        
+        if my_model_name=='res.partner':
+            partner_id=my_record_id
+#        else:
+#            partner_id=None
+        #pdb.set_trace()      
+        #if response_code == "SUCCESSFUL":
+        esms_history = self.env['esms.history'].create({
+            'field_id':my_field[0].id,
+            'record_id': my_record_id,
+            'model_id':my_model[0].id,
+            'account_id':sms_account.id,
+            'from_mobile':from_number,
+            'to_mobile':to_number,
+            'sms_content':sms_content,
+            'status_string':response.reason,
+            'direction':'O',
+            'my_date':datetime.utcnow(),
+            'status_code':'successful',
+            'partner_id':partner_id
+            })
+
+        if 'transaction_id' in response.json().keys():
+            esms_history.write({
+                'sms_gateway_message_id':response.json()['transaction_id']
+                })
+
+        #pdb.set_trace()
         my_sms_response = sms_response()
-        my_sms_response.response_string = response_string.text
+        my_sms_response.response = response.reason
         my_sms_response.response_code = response_code
         
         return my_sms_response
@@ -101,7 +129,7 @@ class voxbone_conf(models.Model):
 
     _inherit = "esms.accounts"
     
-    voxbone_api_id = fields.Char(string='API ID')
+    voxbone_url= fields.Char(default="https://sms.voxbone.com:4443/sms/v1/")
         
     voxbone_user=fields.Char()
     voxbone_password=fields.Char()

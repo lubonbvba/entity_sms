@@ -76,7 +76,7 @@ class esms_templates(models.Model):
         sms_rendered_content = self.env['esms.templates'].render_template(my_template.template_body, my_template.model_id.model, record_id)
         
         rendered_sms_to = self.env['esms.templates'].render_template(my_template.sms_to, my_template.model_id.model, record_id)
-         
+        
         gateway_model = my_template.from_mobile.account_id.account_gateway.gateway_model_name
         
 	my_sms = self.env[gateway_model].send_message(my_template.from_mobile.account_id.id, my_template.from_mobile.mobile_number, rendered_sms_to, sms_rendered_content, my_template.model_id.model, record_id)

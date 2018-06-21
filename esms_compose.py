@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 from openerp import models, fields, api
-import logging
+import logging,pdb
 _logger = logging.getLogger(__name__)
 import requests
 from datetime import datetime
@@ -24,14 +24,20 @@ class esms_compose(models.Model):
     template_id = fields.Many2one('esms.templates', string="Template")
     from_mobile = fields.Many2one('esms.verified.numbers', required=True, string="From Mobile")        
     
+#    @api.onchange('from_mobile')
+#    def calculate_to_number(self):
+#        if hasattr(self.env[self.from_mobile.account_id.account_gateway.gateway_model_name],'get_default_number'):
+#        pdb.set_trace()
     @api.onchange('template_id')
     def load_template(self):
         if self.template_id.id != False:
             
             sms_rendered_content = self.env['esms.templates'].render_template(self.template_id.template_body, self.template_id.model_id.model, self.record_id)
-            
+            sms_rendered_to = self.env['esms.templates'].render_template(self.template_id.sms_to, self.template_id.model_id.model, self.record_id)
+
             self.from_mobile = self.template_id.from_mobile.id
             self.sms_content = sms_rendered_content
+            self.to_number= sms_rendered_to
             self.sms_gateway = self.template_id.account_gateway.id
 
     @api.multi

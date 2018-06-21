@@ -9,10 +9,9 @@
        <xpath expr="//h2[@id='gatewayhook']" position="after">
          <div attrs="{'invisible': [('gateway_model', '!=', 'esms.voxbone')]}">
           <group>
-            <field name="voxbone_api_id" groups="base.group_erp_manager,base.group_system"/>
+            <field name="voxbone_url" groups="base.group_erp_manager,base.group_system"/>
             <field name="voxbone_user" groups="base.group_erp_manager,base.group_system"/>
             <field name="voxbone_password" password="True" groups="base.group_erp_manager,base.group_system"/>
-
           </group>
         </div>
       </xpath>

@@ -44,13 +44,26 @@ class telegram_core(models.Model):
 	else:
 	    response_code = "SUCCESSFUL"
         
-        #pdb.set_trace()   
         
         my_model = self.env['ir.model'].search([('model','=',my_model_name)])
         my_field = self.env['ir.model.fields'].search([('name','=',my_field_name)])
-        
+        if my_model_name=='res.partner':
+            partner_id=my_record_id
         if response_code == "SUCCESSFUL":
-            esms_history = self.env['esms.history'].create({'field_id':my_field[0].id, 'record_id': my_record_id,'model_id':my_model[0].id,'account_id':sms_account.id,'from_mobile':self.env.user.partner_id.mobile, 'to_mobile':to_number,'sms_content':sms_content,'status_string':response_string.text, 'direction':'O','my_date':datetime.utcnow(), 'status_code':'successful'})
+            esms_history = self.env['esms.history'].create({
+                'field_id':my_field[0].id,
+                'partner_id': partner_id,
+                'record_id': my_record_id,
+                'model_id':my_model[0].id,
+                'account_id':sms_account.id,
+                'from_mobile':from_number,
+                'to_mobile':to_number,
+                'sms_content':sms_content,
+                'status_string':response_string.text,
+                'direction':'O',
+                'my_date':datetime.utcnow(),
+                'status_code':'successful'
+                })
         
         my_sms_response = sms_response()
         my_sms_response.response_string = response_string.text

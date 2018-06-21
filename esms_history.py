@@ -81,18 +81,18 @@ class EsmsHistory(models.Model):
                     self.account_id.browse(values['account_id']).last_keep_alive_received=fields.Datetime.now()
                     new_rec.service_message=True
                     #pdb.set_trace()
-                else:
-                    partner.message_post(body=new_rec.sms_content,
-                    subject="SMS received", 
-                    type = 'comment',
-                    subtype = "mail.mt_comment")
+#                else:
+#                    partner.message_post(body=new_rec.sms_content,
+#                    subject="SMS received", 
+#                    type = 'comment',
+#                    subtype = "mail.mt_comment")
             #pdb.set_trace()   
-                incoming_number=self.env['esms.verified.numbers'].search([('mobile_number','ilike',new_rec.to_mobile) ]) 
-                for n in incoming_number:
-                    n.message_post(body=new_rec.sms_content,
-                        subject="SMS received from: " + partner_name + " " +  new_rec.from_mobile,
-                        type = 'comment',
-                        subtype = "mail.mt_comment")
+#                incoming_number=self.env['esms.verified.numbers'].search([('mobile_number','ilike',new_rec.to_mobile) ]) 
+#                for n in incoming_number:
+#                    n.message_post(body=new_rec.sms_content,
+#                        subject="SMS received from: " + partner_name + " " +  new_rec.from_mobile,
+#                        type = 'comment',
+#                        subtype = "mail.mt_comment")
         if new_rec.direction =='O':
             if ('partner_id' in values.keys() and values['partner_id']):
                     new_rec.partner_id.message_post(body="From: %s\n\r%s" % (new_rec.from_mobile,new_rec.sms_content),

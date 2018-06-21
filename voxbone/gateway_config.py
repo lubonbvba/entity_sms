@@ -112,6 +112,7 @@ class voxbone_core(models.Model):
 
                 history_id = self.env['esms.history'].create(vals)
     def receive_message(self,number,vals):
+        _logger.info("Start receiving sms for voxbone number: %s" % (number))
         if self.env['esms.verified.numbers'].search([('mobile_number','=', number)]).account_id.id:
             self.env['esms.history'].create({
                 'sms_content':vals['msg'],
@@ -125,7 +126,8 @@ class voxbone_core(models.Model):
                 })
         else:
             #no account found
-            _logger.info("No account found for voxbone number: %s" % (number))
+            _logger.warning("No account found for voxbone number: %s" % (number))
+        _logger.info("End receiving sms for voxbone number: %s" % (number))
 
 
 class voxbone_conf(models.Model):

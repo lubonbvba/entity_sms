@@ -19,8 +19,6 @@ class MyController(http.Controller):
         
     @http.route('/sms/voxbone/receive/<number>/', type="json", auth="public")
     def sms_voxbone_receive(self, number):
-        #pdb.set_trace()
-           
         request.env['esms.voxbone'].sudo().receive_message(number,request.jsonrequest)
-        
+        _logger.info("End controller, returning 200")
         return 200

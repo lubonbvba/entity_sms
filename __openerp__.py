@@ -3,7 +3,10 @@
     'author': "Sythil, Lubon bvba",
     'category': "Tools",
     'summary': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
+    'description': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
     'license':'GPL-3',
+    'category': 'Uncategorized',
+    'version': '0.3',
     'data': [
  #       'ir.cron.csv',
         'data/entity_sms_cron.xml',
@@ -50,3 +53,4 @@
     ],
     'installable': True,
 }
+

@@ -56,8 +56,6 @@ class voxbone_core(models.Model):
         my_field = self.env['ir.model.fields'].search([('name','=',my_field_name)])
         if my_model_name=='res.partner':
             partner_id=my_record_id
-#        else:
-#            partner_id=None
         #pdb.set_trace()      
         #if response_code == "SUCCESSFUL":
         esms_history = self.env['esms.history'].create({
@@ -114,15 +112,20 @@ class voxbone_core(models.Model):
 
                 history_id = self.env['esms.history'].create(vals)
     def receive_message(self,number,vals):
-        self.env['esms.history'].create({
-            'sms_content':vals['msg'],
-            'to_mobile':number,
-            'direction': 'I',
-            'my_date': vals['time'],
-            'from_mobile':vals['from'],
-            'status_string': str(vals),
-            'sms_gateway_message_id': vals['uuid'],
-            })
+        if self.env['esms.verified.numbers'].search([('mobile_number','=', number)]).account_id.id:
+            self.env['esms.history'].create({
+                'sms_content':vals['msg'],
+                'to_mobile':number,
+                'direction': 'I',
+                'my_date': vals['time'],
+                'from_mobile':vals['from'],
+                'status_string': str(vals),
+                'sms_gateway_message_id': vals['uuid'],
+                'account_id': self.env['esms.verified.numbers'].search([('mobile_number','=', number)]).account_id.id,
+                })
+        else:
+            #no account found
+            _logger.info("No account found for voxbone number: %s" % (number))
 
 
 class voxbone_conf(models.Model):
@@ -133,3 +136,5 @@ class voxbone_conf(models.Model):
         
     voxbone_user=fields.Char()
     voxbone_password=fields.Char()
+
+

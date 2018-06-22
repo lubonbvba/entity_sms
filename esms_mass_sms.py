@@ -8,7 +8,7 @@ class esms_mass_sms(models.Model):
 
     _name = "esms.mass.sms"
     name=fields.Char()
-    from_mobile = fields.Many2one('esms.verified.numbers', string="From Mobile", domain="[('mobile_verified','=','True')]", required=True)
+    from_mobile = fields.Many2one('esms.verified.numbers', string="From Mobile", domain="[('mobile_verified','=','True')]", zrequired=True)
     selected_records = fields.Many2many('res.partner', string="Selected Records", domain="[('sms_opt_out','=',False),('mobile','!=','')]")
     message_text = fields.Text(string="Message Text")
     total_count = fields.Integer(string="Total", compute="_total_count")
@@ -16,13 +16,13 @@ class esms_mass_sms(models.Model):
     queue_count = fields.Integer(string="Queue", compute="_queue_count")
     sent_count = fields.Integer(string="Sent", compute="_sent_count")
     delivered_count = fields.Integer(string="Received", compute="_delivered_count")
-    mass_sms_state = fields.Selection((('draft','Draft'),('sent','Sent')), readonly=True, string="State", default="draft")
+    mass_sms_state = fields.Selection((('draft','Draft'),('sent','Sent')), readonly=True, string="State", default="draft", copy=False)
     model_object_field = fields.Many2one('ir.model.fields', string="Field", domain="[('model_id.model','=','res.partner'),('ttype','!=','one2many'),('ttype','!=','many2many')]", help="Select target field from the related document model.\nIf it is a relationship field you will be able to select a target field at the destination of the relationship.")
     sub_object = fields.Many2one('ir.model', string='Sub-model', readonly=True, help="When a relationship field is selected as first field, this field shows the document model the relationship goes to.")
     sub_model_object_field = fields.Many2one('ir.model.fields', string='Sub-field', help="When a relationship field is selected as first field, this field lets you select the target field within the destination document model (sub-model).")
     copyvalue = fields.Char(string='Placeholder Expression', help="Final placeholder expression, to be copy-pasted in the desired template field.")
     template_id = fields.Many2one('esms.templates', string="Template")
-    
+    unsubscribe_text=fields.Char(default="Reply STOP to stop receiving sms")
     @api.one
     @api.onchange('model_object_field')
     def get_sub_model(self):
@@ -68,7 +68,9 @@ class esms_mass_sms(models.Model):
         for rec in self.selected_records:
             sms_rendered_content = self.env['esms.templates'].render_template(self.message_text, 'res.partner', rec.id)
 
-            message_final = sms_rendered_content + "\n\nReply STOP to stop receiving sms"
+            message_final = sms_rendered_content 
+            if self.unsubscribe_text:
+                message_final += "\n" + self.unsubscribe_text
             gateway_model = self.from_mobile.account_id.account_gateway.gateway_model_name
             my_sms = self.env[gateway_model].send_message(self.from_mobile.account_id.id, self.from_mobile.mobile_number, rec.mobile_e164, message_final, "esms.mass.sms", self.id, "mobile",rec.id)
             my_model = self.env['ir.model'].search([('model','=','res.partner')])

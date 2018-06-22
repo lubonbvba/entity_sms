@@ -6,7 +6,7 @@
     'description': "Allows 2 way sms conversations between leads/partners using the twilio gateway",
     'license':'GPL-3',
     'category': 'Uncategorized',
-    'version': '0.3',
+    'version': '0.4',
     'data': [
  #       'ir.cron.csv',
         'data/entity_sms_cron.xml',

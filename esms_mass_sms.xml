@@ -39,7 +39,8 @@
       	                      </tree>
       	                  </field>
       	                  <field name="total_count"/>
-      	                  <field name="message_text" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}"/>
+                          <field name="message_text" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}"/>
+      	                  <field name="unsubscribe_text" attrs="{'readonly': [('mass_sms_state', '=', 'sent')]}"/>
       	              </group>
 </page>
                             <page string="Dynamic Placeholder Generator">

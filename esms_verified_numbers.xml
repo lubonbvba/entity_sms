@@ -51,7 +51,11 @@
                 </p>
       	  </field>
       </record>
-
+      <record id="mt_sms_received" model="mail.message.subtype">
+         <field name="name">SMS Received</field>
+         <field name="res_model">esms.verified.numbers</field>
+         <field name="description">SMS Received on verified number</field>
+         </record>
       <menuitem id="esms_verified_numbers_menu" name="Verified Numbers" parent="esms_gateway_config_menu" action="esms_verified_numbers_action" sequence="10"/>
    
    </data>

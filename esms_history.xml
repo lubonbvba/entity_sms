@@ -10,7 +10,8 @@
       	          <group>
       	              <field name="my_date"/>
       	              <field name="sms_gateway_message_id"/>
-      	              <field name="account_id" options="{'no_open': True}"/>
+                      <field name="account_id" options="{'no_open': True}"/>
+      	              <field name="verified_number_id" options="{'no_open': True}"/>
       	              <field name="model_id" options="{'no_open': True}"/>
       	              <field name="model_name"/>
       	              <field name="field_id" options="{'no_open': True}"/>
@@ -30,6 +31,8 @@
                       <field name="answer_message"/>
       	              <field name="thread_closed"/>
                       <field name="service_message"/>
+                      <field name="statusdate"/>
+                      <field name="raw_response"/>
       	          </group>
       	      </form>
       	  </field>
@@ -177,7 +180,16 @@
       	      <p class="oe_view_nocontent_create">SMS History</p>
       	  </field>
       </record>
-      
+      <record id="mt_sms_sent_to_partner" model="mail.message.subtype">
+         <field name="name">SMS sent</field>
+         <field name="res_model">res.partner</field>
+         <field name="description">SMS sent to partner</field>
+      </record>
+      <record id="mt_sms_received_from_partner" model="mail.message.subtype">
+         <field name="name">SMS received</field>
+         <field name="res_model">res.partner</field>
+         <field name="description">SMS received from partner</field>
+      </record>             
       <record model="ir.actions.act_window" id="esms_history_delivered_action">
           <field name="name">SMS history</field>
           <field name="res_model">esms.history</field>
